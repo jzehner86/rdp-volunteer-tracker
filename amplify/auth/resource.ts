@@ -28,11 +28,11 @@ export const auth = defineAuth({
       },
       callbackUrls: [
         'http://localhost:5173/',
-        'https://main.PLACEHOLDER_APP_ID.amplifyapp.com/',
+        'https://main.d3hotynttc6sty.amplifyapp.com/',
       ],
       logoutUrls: [
         'http://localhost:5173/',
-        'https://main.PLACEHOLDER_APP_ID.amplifyapp.com/',
+        'https://main.d3hotynttc6sty.amplifyapp.com/',
       ],
     },
   },
