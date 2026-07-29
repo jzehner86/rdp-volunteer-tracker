@@ -322,15 +322,19 @@ main {
   box-shadow: var(--shadow-sm);
 }
 
-.event-list .event-title {
+.event-title {
   font-weight: 600;
   color: var(--color-text);
+}
+
+.event-list .event-title {
   display: block;
 }
 
-.event-list .event-date {
+.event-date {
   font-size: 0.85rem;
   color: var(--color-text-faint);
+  white-space: nowrap;
 }
 
 /* ---------- Forms ---------- */
@@ -468,4 +472,73 @@ tbody tr:hover {
   background: var(--color-bg);
   color: var(--color-text-faint);
   border: 1px solid var(--color-border);
+}
+
+/* ---------- Reports accordion ---------- */
+
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.accordion-item {
+  padding: 0;
+  overflow: hidden;
+}
+
+.accordion-item summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.accordion-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-item summary::before {
+  content: '';
+  flex-shrink: 0;
+  width: 0;
+  height: 0;
+  border-left: 5px solid var(--color-text-faint);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform 0.15s ease;
+}
+
+.accordion-item[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.accordion-item summary:hover {
+  background: var(--color-bg);
+}
+
+.accordion-item summary .event-title {
+  flex: 1;
+}
+
+.accordion-item summary .summary-total {
+  font-weight: 700;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.accordion-body {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.accordion-body table {
+  font-size: 0.85rem;
+}
+
+.accordion-body p {
+  padding: var(--space-4) var(--space-5);
 }

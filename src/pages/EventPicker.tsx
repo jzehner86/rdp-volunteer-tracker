@@ -135,6 +135,8 @@ function HoursForm({
       await client.models.HoursEntry.create({
         eventId: event.id,
         userEmail: attributes.email ?? user.username,
+        firstName: attributes.given_name ?? 'Unknown',
+        lastName: attributes.family_name ?? 'Volunteer',
         hours: parsedHours,
         dateWorked,
         notes: notes || undefined,

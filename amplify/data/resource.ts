@@ -23,6 +23,8 @@ const schema = a.schema({
       eventId: a.id().required(),
       event: a.belongsTo('Event', 'eventId'),
       userEmail: a.string().required(),
+      firstName: a.string().required(),
+      lastName: a.string().required(),
       hours: a.float().required(),
       dateWorked: a.date().required(),
       notes: a.string(),
@@ -36,12 +38,20 @@ const schema = a.schema({
       allow.owner().to(['create', 'read', 'update', 'delete']),
     ]),
 
+  HoursEntryDetail: a.customType({
+    firstName: a.string().required(),
+    lastName: a.string().required(),
+    hours: a.float().required(),
+    dateWorked: a.date().required(),
+  }),
+
   EventTotal: a.customType({
     eventId: a.id().required(),
     title: a.string().required(),
     eventDate: a.date().required(),
     isRemovedFromCalendar: a.boolean().required(),
     totalHours: a.float().required(),
+    entries: a.ref('HoursEntryDetail').array(),
   }),
 
   ReportsResult: a.customType({

@@ -24,6 +24,8 @@ export const auth = defineAuth({
         scopes: ['email', 'profile', 'openid'],
         attributeMapping: {
           email: 'email',
+          givenName: 'given_name',
+          familyName: 'family_name',
         },
       },
       callbackUrls: [
@@ -35,6 +37,12 @@ export const auth = defineAuth({
         'https://main.d3hotynttc6sty.amplifyapp.com/',
       ],
     },
+  },
+  userAttributes: {
+    // mutable: true is required for any attribute mapped from an IdP —
+    // Cognito updates these on every sign-in.
+    givenName: { mutable: true, required: false },
+    familyName: { mutable: true, required: false },
   },
   triggers: {
     preSignUp,

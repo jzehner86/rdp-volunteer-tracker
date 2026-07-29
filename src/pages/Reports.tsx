@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
 import { client } from '../lib/data-client';
 
+interface HoursEntryDetail {
+  firstName: string;
+  lastName: string;
+  hours: number;
+  dateWorked: string;
+}
+
 interface EventTotal {
   eventId: string;
   title: string;
   eventDate: string;
   isRemovedFromCalendar: boolean;
   totalHours: number;
+  entries: HoursEntryDetail[];
 }
 
 const currentYear = new Date().getFullYear();
@@ -35,7 +43,17 @@ export function Reports() {
     setPerEvent(null);
     try {
       const { data } = await client.queries.getReports({ year: reportYear });
-      setPerEvent((data?.perEvent ?? []).filter((e): e is EventTotal => e !== null));
+      const events = (data?.perEvent ?? []).filter((e): e is NonNullable<typeof e> => e !== null);
+      setPerEvent(
+        events.map((e) => ({
+          eventId: e.eventId,
+          title: e.title,
+          eventDate: e.eventDate,
+          isRemovedFromCalendar: e.isRemovedFromCalendar,
+          totalHours: e.totalHours,
+          entries: (e.entries ?? []).filter((entry): entry is HoursEntryDetail => entry !== null),
+        })),
+      );
       setTotalHoursAllUsers(data?.totalHoursAllUsers ?? 0);
     } catch (err) {
       console.error(err);
@@ -83,28 +101,45 @@ export function Reports() {
               <p style={{ marginBottom: 0 }}>No hours logged for {year} yet.</p>
             </div>
           ) : (
-            <div className="card table-card">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Event</th>
-                    <th>Date</th>
-                    <th>Total hours</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {perEvent.map((row) => (
-                    <tr key={row.eventId}>
-                      <td>
-                        {row.title}
-                        {row.isRemovedFromCalendar && <span className="badge">removed from calendar</span>}
-                      </td>
-                      <td>{formatDate(row.eventDate)}</td>
-                      <td>{row.totalHours}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="accordion">
+              {perEvent.map((row) => (
+                <details key={row.eventId} className="card accordion-item">
+                  <summary>
+                    <span className="event-title">
+                      {row.title}
+                      {row.isRemovedFromCalendar && <span className="badge">removed from calendar</span>}
+                    </span>
+                    <span className="event-date">{formatDate(row.eventDate)}</span>
+                    <span className="summary-total">{row.totalHours} hrs</span>
+                  </summary>
+                  <div className="accordion-body">
+                    {row.entries.length === 0 ? (
+                      <p style={{ margin: 0 }}>No individual entries recorded.</p>
+                    ) : (
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Volunteer</th>
+                            <th>Date worked</th>
+                            <th>Hours</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {row.entries.map((entry, i) => (
+                            <tr key={i}>
+                              <td>
+                                {entry.firstName} {entry.lastName}
+                              </td>
+                              <td>{formatDate(entry.dateWorked)}</td>
+                              <td>{entry.hours}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )}
+                  </div>
+                </details>
+              ))}
             </div>
           )}
         </>
