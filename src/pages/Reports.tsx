@@ -11,6 +11,15 @@ interface EventTotal {
 
 const currentYear = new Date().getFullYear();
 
+function formatDate(dateStr: string) {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
 export function Reports() {
   const [year, setYear] = useState(currentYear);
   const [perEvent, setPerEvent] = useState<EventTotal[] | null>(null);
@@ -36,48 +45,68 @@ export function Reports() {
 
   return (
     <div>
-      <h2>Volunteer Hours Report</h2>
-      <label>
-        Year
-        <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
-          {Array.from({ length: 5 }, (_, i) => currentYear - i).map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="reports-toolbar">
+        <h2 style={{ marginBottom: 0 }}>Volunteer Hours Report</h2>
+        <label>
+          Year
+          <select value={year} onChange={(e) => setYear(Number(e.target.value))}>
+            {Array.from({ length: 5 }, (_, i) => currentYear - i).map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
 
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <div className="alert alert-error" role="alert">
+          {error}
+        </div>
+      )}
 
-      {perEvent === null && !error && <p>Loading…</p>}
+      {perEvent === null && !error && (
+        <div className="card state-message">
+          <p style={{ marginBottom: 0 }}>Loading…</p>
+        </div>
+      )}
 
       {perEvent !== null && (
         <>
-          <p>
-            <strong>Total hours — all volunteers ({year}):</strong> {totalHoursAllUsers}
-          </p>
-          <table>
-            <thead>
-              <tr>
-                <th>Event</th>
-                <th>Date</th>
-                <th>Total hours</th>
-              </tr>
-            </thead>
-            <tbody>
-              {perEvent.map((row) => (
-                <tr key={row.eventId}>
-                  <td>
-                    {row.title}
-                    {row.isRemovedFromCalendar && ' (removed from calendar)'}
-                  </td>
-                  <td>{row.eventDate}</td>
-                  <td>{row.totalHours}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="card stat-card">
+            <span className="stat-label">Total hours — all volunteers ({year})</span>
+            <span className="stat-value">{totalHoursAllUsers}</span>
+          </div>
+
+          {perEvent.length === 0 ? (
+            <div className="card state-message">
+              <p style={{ marginBottom: 0 }}>No hours logged for {year} yet.</p>
+            </div>
+          ) : (
+            <div className="card table-card">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Total hours</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {perEvent.map((row) => (
+                    <tr key={row.eventId}>
+                      <td>
+                        {row.title}
+                        {row.isRemovedFromCalendar && <span className="badge">removed from calendar</span>}
+                      </td>
+                      <td>{formatDate(row.eventDate)}</td>
+                      <td>{row.totalHours}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </>
       )}
     </div>

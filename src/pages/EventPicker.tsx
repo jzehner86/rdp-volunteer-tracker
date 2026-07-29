@@ -9,6 +9,15 @@ interface EventSummary {
   eventDate: string;
 }
 
+function formatDate(dateStr: string) {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
 export function EventPicker({ user }: { user: AuthUser }) {
   const [events, setEvents] = useState<EventSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,9 +49,11 @@ export function EventPicker({ user }: { user: AuthUser }) {
 
   if (error) {
     return (
-      <div>
-        <p role="alert">{error}</p>
-        <button type="button" onClick={() => void loadEvents()}>
+      <div className="card state-message">
+        <div className="alert alert-error" role="alert" style={{ marginBottom: 0 }}>
+          {error}
+        </div>
+        <button type="button" className="btn btn-secondary" onClick={() => void loadEvents()}>
           Retry
         </button>
       </div>
@@ -50,11 +61,19 @@ export function EventPicker({ user }: { user: AuthUser }) {
   }
 
   if (!events) {
-    return <p>Loading events…</p>;
+    return (
+      <div className="card state-message">
+        <p style={{ marginBottom: 0 }}>Loading events…</p>
+      </div>
+    );
   }
 
   if (events.length === 0) {
-    return <p>No upcoming RDP Events found.</p>;
+    return (
+      <div className="card state-message">
+        <p style={{ marginBottom: 0 }}>No upcoming RDP Events found.</p>
+      </div>
+    );
   }
 
   return (
@@ -64,9 +83,10 @@ export function EventPicker({ user }: { user: AuthUser }) {
         {events.map((event) => (
           <li key={event.id}>
             <span>
-              {event.title} — {event.eventDate}
+              <span className="event-title">{event.title}</span>
+              <span className="event-date">{formatDate(event.eventDate)}</span>
             </span>
-            <button type="button" onClick={() => setSelectedEventId(event.id)}>
+            <button type="button" className="btn btn-primary" onClick={() => setSelectedEventId(event.id)}>
               Log hours
             </button>
           </li>
@@ -130,9 +150,11 @@ function HoursForm({
 
   if (success) {
     return (
-      <div>
-        <p>Logged {hours} hour(s) for {event.title}.</p>
-        <button type="button" onClick={onDone}>
+      <div className="card" style={{ marginTop: 'var(--space-5)' }}>
+        <div className="alert alert-success" style={{ marginBottom: 'var(--space-4)' }}>
+          Logged {hours} hour(s) for {event.title}.
+        </div>
+        <button type="button" className="btn btn-secondary" onClick={onDone}>
           Done
         </button>
       </div>
@@ -140,9 +162,13 @@ function HoursForm({
   }
 
   return (
-    <form onSubmit={(e) => void handleSubmit(e)}>
+    <form className="card" onSubmit={(e) => void handleSubmit(e)}>
       <h3>Log hours — {event.title}</h3>
-      {error && <p role="alert">{error}</p>}
+      {error && (
+        <div className="alert alert-error" role="alert">
+          {error}
+        </div>
+      )}
       <label>
         Hours worked
         <input
@@ -167,11 +193,11 @@ function HoursForm({
         Notes (optional)
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
       </label>
-      <div>
-        <button type="submit" disabled={submitting}>
+      <div className="form-actions">
+        <button type="submit" className="btn btn-primary" disabled={submitting}>
           {submitting ? 'Submitting…' : 'Submit hours'}
         </button>
-        <button type="button" onClick={onDone} disabled={submitting}>
+        <button type="button" className="btn btn-secondary" onClick={onDone} disabled={submitting}>
           Cancel
         </button>
       </div>
