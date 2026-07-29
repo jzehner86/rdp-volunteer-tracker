@@ -6,6 +6,7 @@ interface HoursEntryDetail {
   lastName: string;
   hours: number;
   dateWorked: string;
+  notes: string | null;
 }
 
 interface EventTotal {
@@ -131,7 +132,16 @@ export function Reports() {
                                 {entry.firstName} {entry.lastName}
                               </td>
                               <td>{formatDate(entry.dateWorked)}</td>
-                              <td>{entry.hours}</td>
+                              <td>
+                                {entry.notes ? (
+                                  <span className="has-note" tabIndex={0}>
+                                    {entry.hours}
+                                    <span className="tooltip">{entry.notes}</span>
+                                  </span>
+                                ) : (
+                                  entry.hours
+                                )}
+                              </td>
                             </tr>
                           ))}
                         </tbody>

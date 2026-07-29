@@ -43,6 +43,7 @@ const schema = a.schema({
     lastName: a.string().required(),
     hours: a.float().required(),
     dateWorked: a.date().required(),
+    notes: a.string(),
   }),
 
   EventTotal: a.customType({

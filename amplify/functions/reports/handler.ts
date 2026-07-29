@@ -9,6 +9,7 @@ interface EntryDetail {
   lastName: string;
   hours: number;
   dateWorked: string;
+  notes: string | null | undefined;
 }
 
 export const handler: Schema['getReports']['functionHandler'] = async (event) => {
@@ -41,6 +42,7 @@ export const handler: Schema['getReports']['functionHandler'] = async (event) =>
         lastName: entry.lastName,
         hours: entry.hours,
         dateWorked: entry.dateWorked,
+        notes: entry.notes,
       });
       entriesByEvent.set(entry.eventId, entries);
     }

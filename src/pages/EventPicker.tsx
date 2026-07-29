@@ -9,6 +9,13 @@ interface EventSummary {
   eventDate: string;
 }
 
+function todayDateString() {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+}
+
 function formatDate(dateStr: string) {
   const [year, month, day] = dateStr.split('-').map(Number);
   return new Date(year, month - 1, day).toLocaleDateString(undefined, {
@@ -114,7 +121,7 @@ function HoursForm({
   onDone: () => void;
 }) {
   const [hours, setHours] = useState('');
-  const [dateWorked, setDateWorked] = useState(event.eventDate);
+  const [dateWorked, setDateWorked] = useState(todayDateString());
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
